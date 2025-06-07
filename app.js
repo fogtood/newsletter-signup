@@ -2,13 +2,16 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import https from "https";
+import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+dotenv.config();
+
 const app = express();
-const port = process.env.port || 8080;
+const PORT = process.env.PORT || 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
@@ -36,10 +39,10 @@ app.post("/", (req, res) => {
 
   const jsonData = JSON.stringify(data);
 
-  const url = `https://us9.api.mailchimp.com/3.0/lists/bd2c2c01c2`;
+  const url = `https://us9.api.mailchimp.com/3.0/lists/${process.env.LIST_ID}`;
   const options = {
     method: "POST",
-    auth: "cannabud:1276a487f388b56e56bd8b0cce9889ef-us9",
+    auth: `cannabud:${process.env.API_KEY}`,
   };
 
   const request = https.request(url, options, (response) => {
@@ -62,12 +65,6 @@ app.post("/failure", (req, res) => {
   res.redirect("/");
 });
 
-app.listen(port, () => {
-  console.log(`Server started at port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server started at port ${PORT}`);
 });
-
-// API Key
-// 1276a487f388b56e56bd8b0cce9889ef-us9
-
-// list id
-// bd2c2c01c2
